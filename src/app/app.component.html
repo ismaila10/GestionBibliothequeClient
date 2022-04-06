@@ -1,0 +1,24 @@
+<div *ngIf="!isAdmin">
+  <div>
+    <app-navigation-menu (logoutUserClicked)="logout($event)"></app-navigation-menu>
+  </div>
+
+  <div class="main__content pt-auto mt-auto">
+    <router-outlet></router-outlet>
+  </div>
+  <div class="bottom-0 w-full">
+    <app-footer></app-footer>
+  </div>
+</div>
+
+<div *ngIf="isAdmin" class="main">
+  <div *ngIf="isLoggin" class="sidebar">
+    <app-sidebar (logoutClicked)="logout($event)"></app-sidebar>
+  </div>
+  <div class="main__content pt-auto mt-auto">
+    <router-outlet></router-outlet>
+  </div>
+</div>
+
+
+

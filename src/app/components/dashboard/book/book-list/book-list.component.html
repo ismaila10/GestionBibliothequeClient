@@ -1,0 +1,90 @@
+<div class="px-4 sm:px-6 lg:px-8">
+  <div class="sm:flex sm:items-center">
+    <div class="sm:flex-auto">
+      <h1 class="text-xl font-semibold text-gray-900"> Liste des {{ title }}</h1>
+      <p class="mt-2 text-sm text-gray-700">{{ description }}</p>
+      <button title="Ajouter nouvel auteur" (click)="showFormModal(true)"  type="button" class="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto">
+        <img src="https://icon-library.com/images/author-icon/author-icon-10.jpg" class="text-white mr-2" height="20px" width="20px" alt="Ajouter nouvel auteur"> Ajouter Auteur
+        <img src="https://icon-library.com/images/author-icon/author-icon-11.jpg" class="text-white ml-2" height="20px" width="20px" alt="Ajouter nouvel auteur">
+      </button>
+    </div>
+    <div *ngIf="show" class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+      <button (click)="showFormModal(false)" type="button" class="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto">
+        Ajouter {{ title }} <mat-icon class="ml-2">library_add</mat-icon>
+      </button>
+    </div>
+    <div *ngIf="show" class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+      <button (click)="showUploadFormModal()" type="button" class="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto">
+        Upload Livres <mat-icon class="ml-2">cloud_upload</mat-icon>
+      </button>
+    </div>
+  </div>
+  <div class="flex flex-col">
+    <!-- <app-modal [book]="bookDto" (isCloseModal)="closeModal($event)" (isValidateModal)="validateModal($event)" [showModalAnnuler]="true" title="Ajouter livre" [showModal]="showFormAdd">
+      <app-book-form [submit]="isValidateForm"></app-book-form>
+    </app-modal> -->
+    <app-modal-form [item]="bookDto" [isBookForm]="isBookForm" [isUploadForm]="isBookUploadForm" [isAuthorForm]="isAuthorForm" (isCloseModal)="closeModal($event)" [showModalAnnuler]="true" title="Ajouter livre" [showModal]="showFormAdd"></app-modal-form>
+    <app-modal [item]="bookDto" (isCloseModal)="closeModal($event)" buttonTitle="Fermer" title="Livre" [showModal]="showDetail"></app-modal>
+  </div>
+  <div class="mt-8 flex flex-col">
+    <div class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
+      <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
+        <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+          <table class="min-w-full divide-y divide-gray-300">
+            <thead class="bg-gray-50">
+              <tr>
+                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Auteur</th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Titre</th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Status</th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Quantité</th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Action</th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Action</th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Action</th>
+
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 bg-white">
+              <tr *ngFor="let item of pageSlice">
+                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
+                  <div class="flex items-center">
+                    <div class="h-10 w-10 flex-shrink-0">
+                      <img class="h-10 w-10 rounded-full" src="{{item.image}}" alt="">
+                    </div>
+                    <div class="ml-4">
+                      <div class="font-medium text-gray-900">{{ item.title }}</div>
+                      <div class="text-gray-500">{{ item.author?.firstName}} {{ item.author?.lastName}}</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                  <div class="text-gray-900">{{ item.category?.name }}</div>
+                  <div class="text-gray-500">Optimization</div>
+                </td>
+                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                  <span class="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold leading-5 text-green-800">{{ SwitchStatus(item.status) }}</span>
+                </td>
+                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ item.quantity }}</td>
+                <td class="whitespace-nowrap px-3 py-4 text-sm font-medium text-gray-500">
+                  <button (click)="showDetailModal(item)" title="Consulter" class="text-indigo-600 hover:text-indigo-900">
+                    <mat-icon>visibility</mat-icon>
+                  </button>
+                </td>
+                <td class="whitespace-nowrap px-3 py-4 text-sm font-medium text-gray-500">
+                  <button (click)="setBook(item, false)" title="Modifier" class="text-indigo-600 hover:text-indigo-900">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                </td>
+                <td class="whitespace-nowrap px-3 py-4 text-sm font-medium text-gray-500">
+                  <button title="Supprimer" class="text-indigo-600 hover:text-indigo-900">
+                    <mat-icon>delete_forever</mat-icon>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <mat-paginator [length]="items.length" [pageSize]="5" [pageSizeOptions]="[5,10,15]" (page)="onPageChange($event)"></mat-paginator>
+    </div>
+  </div>
+</div>

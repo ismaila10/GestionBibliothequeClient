@@ -1,0 +1,27 @@
+<div class="pt-2 mt-4">
+  <h3 class="text-lg leading-6 font-medium text-gray-900">{{type}} Stats</h3>
+
+  <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    <div *ngFor="let item of items" class="relative bg-white pt-5 px-4 pb-12 sm:pt-6 sm:px-6 shadow rounded-lg overflow-hidden">
+      <dt>
+        <div class="absolute bg-indigo-500 rounded-md p-3">
+          <!-- Heroicon name: outline/users -->
+          <img [src]="item.icon" width="30px">
+        </div>
+        <p class="ml-16 text-sm text-right font-medium text-gray-500 truncate"> {{item.title}} </p>
+      </dt>
+      <dd class="ml-16 pb-6 flex items-baseline sm:pb-7">
+        <p class="text-2xl font-semibold text-gray-900">{{item.stat}}</p>
+        <p class="ml-2 flex items-baseline text-sm font-semibold text-green-600">
+          <!-- Heroicon name: solid/arrow-sm-up -->
+          <span class="sr-only"> Increased by </span>
+        </p>
+        <div class="absolute bottom-0 inset-x-0 bg-gray-50 px-4 py-4 sm:px-6">
+          <div class="text-sm">
+            <a routerLink="/dashboard" class="font-medium text-indigo-600 hover:text-indigo-500"> Voir tout<span class="sr-only"> Total Subscribers stats</span></a>
+          </div>
+        </div>
+      </dd>
+    </div>
+  </dl>
+</div>
