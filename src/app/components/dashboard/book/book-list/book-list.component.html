@@ -26,9 +26,22 @@
     <app-modal-form [item]="bookDto" [isBookForm]="isBookForm" [isUploadForm]="isBookUploadForm" [isAuthorForm]="isAuthorForm" (isCloseModal)="closeModal($event)" [showModalAnnuler]="true" title="Ajouter livre" [showModal]="showFormAdd"></app-modal-form>
     <app-modal [item]="bookDto" (isCloseModal)="closeModal($event)" buttonTitle="Fermer" title="Livre" [showModal]="showDetail"></app-modal>
   </div>
+
   <div class="mt-8 flex flex-col">
     <div class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
       <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
+        <div class="mb-2 w-1/3">
+          <label for="search" class="sr-only">Search</label>
+          <div class="relative">
+            <div class="pointer-events-none absolute inset-y-0 left-0 pl-3 flex items-center">
+              <!-- Heroicon name: solid/search -->
+              <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            <input [(ngModel)]="bookFilter"  class="block w-full bg-white border border-gray-300 rounded-md py-2 pl-10 pr-3 text-sm placeholder-gray-500 focus:outline-none focus:text-gray-900 focus:placeholder-gray-400 focus:ring-1 focus:ring-rose-500 focus:border-rose-500 sm:text-sm" placeholder="Search" type="text">
+          </div>
+        </div>
         <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
           <table class="min-w-full divide-y divide-gray-300">
             <thead class="bg-gray-50">
@@ -44,7 +57,7 @@
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-200 bg-white">
-              <tr *ngFor="let item of pageSlice">
+              <tr *ngFor="let item of filteredBooks">
                 <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
                   <div class="flex items-center">
                     <div class="h-10 w-10 flex-shrink-0">
@@ -84,7 +97,7 @@
           </table>
         </div>
       </div>
-      <mat-paginator [length]="items.length" [pageSize]="5" [pageSizeOptions]="[5,10,15]" (page)="onPageChange($event)"></mat-paginator>
+      <mat-paginator [length]="filteredBooks.length" itemsPerPageLabel="nbreitem" [pageIndex]="1" [pageSize]="5" [pageSizeOptions]="[5,10,15]" (page)="onPageChange($event)"></mat-paginator>
     </div>
   </div>
 </div>

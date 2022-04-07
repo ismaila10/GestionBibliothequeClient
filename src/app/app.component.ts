@@ -22,6 +22,7 @@ export class AppComponent implements OnInit, OnChanges {
 
   logout(value : boolean) {
     this.isLoggin = !value;
+    this.isAdmin = false;
     this.authService.logout()
   }
 }

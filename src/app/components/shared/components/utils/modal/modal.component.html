@@ -19,6 +19,7 @@
       <ng-content *ngIf="title === ''"></ng-content>
       <app-book-detail *ngIf="title === 'Livre'" title="Livre" [item]="item"></app-book-detail>
       <app-loan-detail *ngIf="title === 'Pret'" title="Pret" [item]="loan"></app-loan-detail>
+      <app-user-detail *ngIf="title === 'Utilisateur'" title="Utilisateur" [item]="user"></app-user-detail>
       <!--footer-->
       <div class="flex items-center justify-end p-6 border-t border-solid border-slate-200 rounded-b">
         <button class="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto" type="button" (click)="closeModal()">

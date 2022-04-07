@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { User } from '../../shared/clientSwagger/onlineLibrary.client';
+import { User, UserDto } from '../../shared/clientSwagger/onlineLibrary.client';
 import { OnlineLibraryService } from '../../shared/services/online-library.service';
 
 @Component({
@@ -15,7 +15,7 @@ export class UserComponent implements OnInit {
     this.getUsers()
   }
 
-  userList : User[] = [];
+  userList : UserDto[] = [];
 
   public async getUsers() {
     this.onlineLibraryService.getAllUsers()

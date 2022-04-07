@@ -29,9 +29,6 @@ export class ModalFormComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     this.getAuthors();
     this.getCategories();
-    /*console.log("bookform => "+ this.isBookForm)
-    console.log("authorform => "+ this.isAuthorForm)
-    console.log("uploadform => "+ this.isUploadForm)*/
     console.log(this.item);
     if(this.item?.id){
       this.bookForm = this.formPatchValue()
@@ -55,6 +52,8 @@ export class ModalFormComponent implements OnInit, OnChanges {
   @Output() isValidateModal : EventEmitter<boolean> = new EventEmitter();
 
   classTaille : string = '';
+  message : string = '';
+  isNotif: boolean = false;
   showSpinner : boolean = false;
   isSubmit: boolean = false;
   categories : Category[] = [];
@@ -70,7 +69,7 @@ export class ModalFormComponent implements OnInit, OnChanges {
   isFileUploaded: boolean = false;
   isReadyToRunProcess: boolean = false;
   isFileHeaderCorrect: boolean = false;
-  isFileError: boolean = false;
+  isFileSuccess: boolean = true;
   fileValidHeader : Array<string> = [];
   errorMessage: string = '';
   isProcessSuccessed: boolean = true;
@@ -92,7 +91,7 @@ export class ModalFormComponent implements OnInit, OnChanges {
     this.isFormatHasError = false;
     this.isReadyToRunProcess = false;
     this.isFileHeaderCorrect = true;
-    this.isFileError = false;
+    this.isFileSuccess = true;
   }
 
   formPatchValue(): FormGroup {
@@ -124,13 +123,6 @@ export class ModalFormComponent implements OnInit, OnChanges {
       this.fileInputVariable.nativeElement.value = "";
       return;
     }
-    /*if (this.file.type != 'application/vnd.ms-excel') {
-			this.isFormatHasError = true;
-		}else {
-      this.isReadyToRunProcess = true;
-      this.fileValidHeader = ["titre", "maison_de_publication", "quantite", "statut", "description", "image", "date_de_publication", "prenom_auteur", "nom_auteur", "nationalite_auteur", "categorie"];
-      this.checkHeaderFile(this.file, this.fileValidHeader);
-    }*/
     this.isReadyToRunProcess = true;
     this.fileValidHeader = ["titre", "maison_de_publication", "quantite", "statut", "description", "image", "date_de_publication", "prenom_auteur", "nom_auteur", "nationalite_auteur", "categorie"];
     this.checkHeaderFile(this.file, this.fileValidHeader);
@@ -146,9 +138,12 @@ export class ModalFormComponent implements OnInit, OnChanges {
 
 			const equals = (a : any, b : any) : boolean => JSON.stringify(a) === JSON.stringify(b);
       const b = equals(headersRow, validHeader);
-      console.log("b => "+b);
 			if (!equals(headersRow, validHeader)) {
-				this.isFileHeaderCorrect = false;
+        this.errorMessage = "Les en-têtes du fichier chargé ne sont pas conformes";
+        this.isFileHeaderCorrect = false;
+        setTimeout(() => {
+          this.isFileHeaderCorrect = true;
+        }, 5000);
 				this.isReadyToRunProcess = false;
 			}
 		};
@@ -168,7 +163,7 @@ export class ModalFormComponent implements OnInit, OnChanges {
     this.authorForm.reset();
     this.isFileUploaded = false;
     this.isFormatHasError = false;
-    this.isFileError = false;
+    this.isFileSuccess = true;
     this.isReadyToRunProcess = false;
     this.showSpinner = false;
     this.isFileHeaderCorrect = true;
@@ -280,19 +275,43 @@ export class ModalFormComponent implements OnInit, OnChanges {
         await this.onlineLibraryService.uploadBook(fileParameter)
           .then(x => {
             this.showSpinner = false;
+            this.message = "Les livres ont été ajoutés avec succes";
+            this.isFileSuccess = true;
+            this.isNotif = true;
+            setTimeout(() => {
+              this.isNotif = false;
+            }, 9000);
+            this.fileInputVariable.nativeElement.value = "";
             console.log("then => "+x)
           }).catch(err => {
             console.log("catch err then => "+err.ErrorMessage)
-            this.showSpinner = false;
+            if(err.ErrorMessage || err.ErrorMessage == ''){
+              this.showSpinner = false;
+              this.message = "Erreur lors de l'ajout, le fichier contient un champ vide";
+              this.isFileSuccess = false;
+              this.isNotif = true;
+              setTimeout(() => {
+                this.isNotif = false;
+              }, 9000);
+            }else {
+              this.showSpinner = false;
+              this.message = "Les livres ont été ajoutés avec succes";
+              this.isFileSuccess = true;
+              this.isNotif = true;
+              setTimeout(() => {
+                this.isNotif = false;
+              }, 9000);
+              this.fileInputVariable.nativeElement.value = "";
+            }
+
           })
       }
       catch (err : any) {
         console.log("catch err try => "+ err.toString())
 				this.showSpinner = false;
-				this.isFileError = true;
+				this.isFileSuccess = false;
 			}
     }
-    this.fileInputVariable.nativeElement.value = "";
   }
 
   validateModal() {

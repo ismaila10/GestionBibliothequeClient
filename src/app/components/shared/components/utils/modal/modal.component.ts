@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { BookDto, LoanDto } from '../../../clientSwagger/onlineLibrary.client';
+import { BookDto, LoanDto, User } from '../../../clientSwagger/onlineLibrary.client';
 
 @Component({
   selector: 'app-modal',
@@ -16,6 +16,7 @@ export class ModalComponent implements OnInit, OnChanges {
   @Input() showModal : boolean = true;
   @Input() item : BookDto = new BookDto();
   @Input() loan : LoanDto = new LoanDto();
+  @Input() user : User = new User();
   @Input() showModalAnnuler : boolean = false;
   @Input() title : string = '';
   @Input() buttonTitle : string = 'Valider';
