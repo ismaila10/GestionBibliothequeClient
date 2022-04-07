@@ -1,5 +1,5 @@
 import { Injectable, OnChanges, SimpleChanges } from '@angular/core';
-import { OnlineLibraryClient, TokenRequest, UserLoginRequest, UserLoginResponse } from '../../clientSwagger/onlineLibrary.client';
+import { OnlineLibraryClient, TokenRequest, UserLoginRequest, UserLoginResponse, UserRegistrationRequest } from '../../clientSwagger/onlineLibrary.client';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { Router } from '@angular/router';
 
@@ -18,6 +18,10 @@ export class AuthService {
 
   public login(body : UserLoginRequest): Promise<any> {
     return this.onlineLibraryClient.login("1", body).toPromise();
+  }
+
+  public register(body : UserRegistrationRequest): Promise<any> {
+    return this.onlineLibraryClient.register("1", body).toPromise();
   }
 
   public generateRefreshToken(body : TokenRequest) : Promise<any> {
@@ -49,7 +53,7 @@ export class AuthService {
 
   getDecodedToken() : string {
     let tokenPayload = JSON.stringify(this.jwtHelpService.decodeToken(this.token));
-    //console.log(tokenPayload)
+    console.log(tokenPayload)
     return tokenPayload;
   }
 

@@ -43,6 +43,7 @@ import { BookUserComponent } from './components/book-user/book-user.component';
 import { BookUserDetailComponent } from './components/book-user/book-user-detail/book-user-detail.component';
 import { FooterComponent } from './components/shared/components/footer/footer.component';
 import { AboutComponent } from './components/about/about.component';
+import { NotificationComponent } from './components/shared/components/utils/notification/notification.component';
 registerLocaleData(localeFr, 'fr');
 
 @NgModule({
@@ -75,7 +76,8 @@ registerLocaleData(localeFr, 'fr');
     BookUserComponent,
     BookUserDetailComponent,
     FooterComponent,
-    AboutComponent
+    AboutComponent,
+    NotificationComponent
   ],
   imports: [
     BrowserModule,
