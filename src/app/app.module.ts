@@ -44,6 +44,7 @@ import { BookUserDetailComponent } from './components/book-user/book-user-detail
 import { FooterComponent } from './components/shared/components/footer/footer.component';
 import { AboutComponent } from './components/about/about.component';
 import { NotificationComponent } from './components/shared/components/utils/notification/notification.component';
+import { ProfilComponent } from './components/dashboard/user/profil/profil.component';
 registerLocaleData(localeFr, 'fr');
 
 @NgModule({
@@ -77,7 +78,8 @@ registerLocaleData(localeFr, 'fr');
     BookUserDetailComponent,
     FooterComponent,
     AboutComponent,
-    NotificationComponent
+    NotificationComponent,
+    ProfilComponent
   ],
   imports: [
     BrowserModule,

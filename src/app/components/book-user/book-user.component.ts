@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { PageEvent } from '@angular/material/paginator';
 import { BookDto } from '../shared/clientSwagger/onlineLibrary.client';
 import { OnlineLibraryService } from '../shared/services/online-library.service';
 
@@ -16,14 +17,37 @@ export class BookUserComponent implements OnInit {
   }
 
   bookList : BookDto[] = [];
+  filteredBooks : BookDto[] = [];
+  _bookFilter = '';
 
   public async getBooks() {
     this.onlineLibraryService.getAllBooks()
       .then(x => {
         this.bookList = x;
-        console.log(this.bookList)
+        this.filteredBooks = this.bookList;
       })
       .catch(x => console.log(x));
   }
+
+  public get bookFilter(): string {
+    return this._bookFilter;
+  }
+
+  public set bookFilter(filter: string) {
+    this._bookFilter = filter;
+
+    this.filteredBooks = this.bookFilter ? this.filterBooks(this.bookFilter) : this.bookList;
+  }
+
+  private filterBooks(criteria: string): BookDto[] {
+    criteria = criteria.toLocaleLowerCase();
+
+    const response = this.bookList.filter(x =>
+      x?.title.toLocaleLowerCase().indexOf(criteria) != -1
+      );
+    return response;
+  }
+
+  onPageChange(event: PageEvent) {}
 
 }

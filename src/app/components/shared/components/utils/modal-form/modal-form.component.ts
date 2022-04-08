@@ -73,6 +73,7 @@ export class ModalFormComponent implements OnInit, OnChanges {
   fileValidHeader : Array<string> = [];
   errorMessage: string = '';
   isProcessSuccessed: boolean = true;
+  isValidInput = true;
 
   ngOnInit(): void {
 
@@ -143,6 +144,7 @@ export class ModalFormComponent implements OnInit, OnChanges {
         this.isFileHeaderCorrect = false;
         setTimeout(() => {
           this.isFileHeaderCorrect = true;
+          this.errorMessage = '';
         }, 5000);
 				this.isReadyToRunProcess = false;
 			}
@@ -199,42 +201,69 @@ export class ModalFormComponent implements OnInit, OnChanges {
 
   async validateForm() {
     if (this.bookForm.invalid) {
-			alert("Form book invalid ");
-      this.bookForm.reset();
-      this.isValidForm = false;
+      this.errorMessage = "Veuillez remplir tous les champs obligatoires";
       if(this.authorForm.invalid){
-        alert("Form author invalid"+ this.authorForm.value);
-        this.authorForm.reset();
+        this.errorMessage = "Veuillez remplir tous les champs obligatoires";
       }else {
         this.showSpinner = true;
-        alert(this.authorForm.value)
         this.authorInfos.firstName = this.authorForm.get('firstName')?.value;
         this.authorInfos.lastName = this.authorForm.get('lastName')?.value;
         this.authorInfos.country = this.authorForm.get('country')?.value;
         this.authorInfos.birthDay = new Date(this.authorForm.get('birthDay')?.value);
-        this.onlineLibraryService.upsertAuthor(this.authorInfos)
+        await this.onlineLibraryService.upsertAuthor(this.authorInfos)
         .then(x => {
-          console.log(x + " ok insert");
+          this.message = "Auteur ajouté avec succes";
+            this.isValidForm = true;
+            this.isNotif = true;
+            setTimeout(() => {
+              this.isNotif = false;
+            }, 9000);
+            this.authorForm.reset();
           this.showSpinner = false;
         })
         .catch(x => {
-          console.log(x + " Not ok insert");
+          this.message = "Erreur lors de l'ajout";
+            this.isValidForm = false;
+            this.isNotif = true;
+            setTimeout(() => {
+              this.isNotif = false;
+              this.isValidForm = true;
+            }, 9000);
           this.showSpinner = false;
         })
-        this.authorForm.reset();
+        return;
       }
+      this.isValidInput = false;
+      setTimeout(() => {
+        this.isValidInput = true;
+        this.errorMessage = ''
+      }, 5000);
 		}else {
       this.showSpinner = true;
       await this.onlineLibraryService.getAuthorById(this.bookForm?.value?.author)
         .then(x => {
           this.bookInfos.author = x;
         })
-        .catch(x => console.log(x));
+        .catch(x => {
+          this.errorMessage = "Erreur lors de la récupèration des informations de l'auteur";
+          this.isValidInput = false;
+          setTimeout(() => {
+            this.isValidInput = true;
+            this.errorMessage = ''
+          }, 5000);
+        });
       await this.onlineLibraryService.getCategoryById(this.bookForm?.value?.category)
         .then(x => {
           this.bookInfos.category = x;
         })
-        .catch(x => console.log(x));
+        .catch(x => {
+          this.errorMessage = "Erreur lors de la récupèration des informations de la catégorie";
+          this.isValidInput = false;
+          setTimeout(() => {
+            this.isValidInput = true;
+            this.errorMessage = ''
+          }, 5000);
+        });
 
       this.bookInfos.title = this.bookForm.value?.title;
       this.bookInfos.description = this.bookForm.value?.description;
@@ -243,17 +272,28 @@ export class ModalFormComponent implements OnInit, OnChanges {
       this.bookInfos.publishingHouse = this.bookForm.value?.publishingHouse;
       this.bookInfos.quantity = this.bookForm.value?.quantity;
 
-      this.onlineLibraryService.addBook(this.bookInfos)
+      await this.onlineLibraryService.addBook(this.bookInfos)
         .then(x => {
-          console.log(x + " ok insert");
+          this.message = "Livre ajouté avec succes";
+            this.isValidForm = true;
+            this.isNotif = true;
+            setTimeout(() => {
+              this.isNotif = false;
+            }, 9000);
+            this.bookForm.reset();
           this.showSpinner = false;
+          this.bookForm.reset();
         })
         .catch(x => {
-          console.log(x + " Not ok insert");
+          this.message = "Erreur lors de l'ajout";
+            this.isValidForm = false;
+            this.isNotif = true;
+            setTimeout(() => {
+              this.isNotif = false;
+              this.isValidForm = true;
+            }, 9000);
           this.showSpinner = false;
         })
-
-        this.bookForm.reset();
         this.item = new BookDto();
     }
   }
@@ -280,11 +320,10 @@ export class ModalFormComponent implements OnInit, OnChanges {
             this.isNotif = true;
             setTimeout(() => {
               this.isNotif = false;
+              this.message = '';
             }, 9000);
             this.fileInputVariable.nativeElement.value = "";
-            console.log("then => "+x)
           }).catch(err => {
-            console.log("catch err then => "+err.ErrorMessage)
             if(err.ErrorMessage || err.ErrorMessage == ''){
               this.showSpinner = false;
               this.message = "Erreur lors de l'ajout, le fichier contient un champ vide";
@@ -292,6 +331,8 @@ export class ModalFormComponent implements OnInit, OnChanges {
               this.isNotif = true;
               setTimeout(() => {
                 this.isNotif = false;
+                this.message = '';
+                this.isFileSuccess = true;
               }, 9000);
             }else {
               this.showSpinner = false;
@@ -300,6 +341,7 @@ export class ModalFormComponent implements OnInit, OnChanges {
               this.isNotif = true;
               setTimeout(() => {
                 this.isNotif = false;
+                this.message = '';
               }, 9000);
               this.fileInputVariable.nativeElement.value = "";
             }
@@ -307,9 +349,17 @@ export class ModalFormComponent implements OnInit, OnChanges {
           })
       }
       catch (err : any) {
-        console.log("catch err try => "+ err.toString())
 				this.showSpinner = false;
-				this.isFileSuccess = false;
+        this.showSpinner = false;
+        this.message = "Erreur lors de l'ajout, le fichier contient un champ vide";
+        this.isFileSuccess = false;
+        this.isNotif = true;
+        setTimeout(() => {
+          this.isNotif = false;
+          this.message = '';
+          this.isFileSuccess = true;
+        }, 9000);
+
 			}
     }
   }

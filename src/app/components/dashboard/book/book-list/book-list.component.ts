@@ -59,7 +59,6 @@ export class BookListComponent implements OnInit {
 
     const response = this.itemBooks.filter(x =>
       x?.title.toLocaleLowerCase().indexOf(criteria) != -1 ||
-      x?.author?.firstName.toLocaleLowerCase().indexOf(criteria) != -1 ||
       x?.author?.lastName.toLocaleLowerCase().indexOf(criteria) != -1
       );
     return response;

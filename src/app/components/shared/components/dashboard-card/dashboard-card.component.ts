@@ -12,6 +12,7 @@ export class DashboardCardComponent implements OnInit {
 
   @Input() items : Statistique[] = [];
   @Input() type : string = "";
+  @Input() link : string = "";
 
   icons : any = [
     { value: "M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z", crease: "M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" },

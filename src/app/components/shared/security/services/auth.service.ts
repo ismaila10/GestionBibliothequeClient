@@ -20,6 +20,10 @@ export class AuthService {
     return this.onlineLibraryClient.login("1", body).toPromise();
   }
 
+  public getUserByEmail(body: string): Promise<any> {
+    return this.onlineLibraryClient.email(body, "1").toPromise();
+  }
+
   public register(body : UserRegistrationRequest): Promise<any> {
     return this.onlineLibraryClient.register("1", body).toPromise();
   }
