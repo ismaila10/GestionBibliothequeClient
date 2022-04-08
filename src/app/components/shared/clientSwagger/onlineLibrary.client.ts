@@ -3350,8 +3350,8 @@ export interface IUserLoginRequest {
 }
 
 export class UserLoginResponse implements IUserLoginResponse {
-    token: string = '';
-    refreshToken: string = '';
+    token: string = "";
+    refreshToken: string = "";
     success?: boolean;
     errors?: string[] | undefined;
 

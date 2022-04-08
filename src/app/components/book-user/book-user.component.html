@@ -30,6 +30,8 @@
       </div>
     </div>
 
+    <mat-spinner *ngIf="showSpinner" diameter="60" class="ml-3" color="accent"></mat-spinner>
+
     <div class="mb-24 grid grid-cols-1 gap-y-10 sm:grid-cols-2 gap-x-6 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
       <a *ngFor="let item of filteredBooks" href="#" class="group">
         <div class="w-full aspect-w-1 aspect-h-1 bg-gray-200 rounded-lg overflow-hidden xl:aspect-w-7 xl:aspect-h-8">

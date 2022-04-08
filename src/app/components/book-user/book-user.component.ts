@@ -19,14 +19,18 @@ export class BookUserComponent implements OnInit {
   bookList : BookDto[] = [];
   filteredBooks : BookDto[] = [];
   _bookFilter = '';
+  showSpinner: boolean = false;
 
   public async getBooks() {
+    this.showSpinner = true;
     this.onlineLibraryService.getAllBooks()
       .then(x => {
         this.bookList = x;
         this.filteredBooks = this.bookList;
+        this.showSpinner = false;
       })
       .catch(x => console.log(x));
+      this.showSpinner = false;
   }
 
   public get bookFilter(): string {
