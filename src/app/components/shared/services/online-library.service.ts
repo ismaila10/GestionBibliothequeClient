@@ -25,6 +25,10 @@ export class OnlineLibraryService {
     return this.onlineLibraryClient.upload("1", file).toPromise();
   }
 
+  public getBookByParam(idAuthor? : number, idCat? : number, status?: number, titre?: string, publishHouse?: string, publishDate?: Date) : Promise<any> {
+    return this.onlineLibraryClient.params(idAuthor, idCat, status, titre, publishHouse, publishDate ,"1").toPromise();
+  }
+
   // AUTHORS
   public getAllAuthors() : Promise<any> {
     return this.onlineLibraryClient.authorsAll("1").toPromise();
@@ -56,8 +60,19 @@ export class OnlineLibraryService {
     return this.onlineLibraryClient.loansAll("1").toPromise();
   }
 
+  public getLoanById(id: number): Promise<any> {
+    return this.onlineLibraryClient.loansGET(id, "1").toPromise();
+  }
+
   // USERS
   public getAllUsers(): Promise<any> {
     return this.onlineLibraryClient.usersAll("1").toPromise();
   }
+
+  public getuserById(id: number): Promise<any> {
+    return this.onlineLibraryClient.users(id, "1").toPromise();
+  }
+
+  // SETUP
+  
 }

@@ -1,5 +1,5 @@
 import { LOCALE_ID, NgModule } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -43,6 +43,8 @@ import { BookUserComponent } from './components/book-user/book-user.component';
 import { BookUserDetailComponent } from './components/book-user/book-user-detail/book-user-detail.component';
 import { FooterComponent } from './components/shared/components/footer/footer.component';
 import { AboutComponent } from './components/about/about.component';
+import { NotificationComponent } from './components/shared/components/utils/notification/notification.component';
+import { ProfilComponent } from './components/dashboard/user/profil/profil.component';
 registerLocaleData(localeFr, 'fr');
 
 @NgModule({
@@ -75,7 +77,9 @@ registerLocaleData(localeFr, 'fr');
     BookUserComponent,
     BookUserDetailComponent,
     FooterComponent,
-    AboutComponent
+    AboutComponent,
+    NotificationComponent,
+    ProfilComponent
   ],
   imports: [
     BrowserModule,
@@ -87,6 +91,7 @@ registerLocaleData(localeFr, 'fr');
     MatIconModule,
     MatProgressSpinnerModule,
     MatPaginatorModule,
+    FormsModule,
     BrowserAnimationsModule
   ],
   providers: [OnlineLibraryClient, OnlineLibraryService, JwtHelperService,

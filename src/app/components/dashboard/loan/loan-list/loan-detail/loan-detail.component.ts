@@ -15,7 +15,7 @@ export class LoanDetailComponent implements OnInit, OnChanges {
     }else{
       this.showSpinner = true;
     }
-    console.log("ngcontent on change => "+this.item.book?.title)
+    console.log(this.item)
   }
 
   @Input() item: LoanDto = new LoanDto();

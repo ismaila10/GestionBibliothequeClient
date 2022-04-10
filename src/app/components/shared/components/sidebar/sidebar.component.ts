@@ -1,4 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { User } from '../../clientSwagger/onlineLibrary.client';
 import { AuthService } from '../../security/services/auth.service';
 
 @Component({
@@ -11,6 +12,9 @@ export class SidebarComponent implements OnInit {
   constructor(private authService: AuthService) { }
 
   show: boolean = false;
+  user: User = new User;
+  showDetail: boolean = false;
+  email: string = '';
   menu : any[] = [
     { id:1, link: "dashboard/", title: "DashBoard", icon:'https://cdn-icons.flaticon.com/png/512/4399/premium/4399641.png?token=exp=1649000111~hmac=ca9b08dd119daf5ac3c0cb210bae26e0'},
     { id:2, link: "dashboard/book", title: "Livres", icon:'https://cdn-icons.flaticon.com/png/512/3330/premium/3330300.png?token=exp=1648995567~hmac=5ef899d5e133cf6b713579d6471fd34a' },
@@ -25,12 +29,22 @@ export class SidebarComponent implements OnInit {
   ]
 
   ngOnInit(): void {
+    this.email = JSON.parse(this.authService.getDecodedToken())?.email;
+    this.getUser();
   }
 
   @Output() logoutClicked : EventEmitter<boolean> = new EventEmitter<boolean>();
 
   public showDrop() {
     this.show = !this.show;
+  }
+
+  async getUser() {
+    await this.authService.getUserByEmail(this.email)
+      .then(x => {
+        this.user = x;
+      })
+      .catch(x => console.log(x));
   }
 
   logout() : void {

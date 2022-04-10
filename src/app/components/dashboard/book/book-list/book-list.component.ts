@@ -1,6 +1,7 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import { BookDto } from 'src/app/components/shared/clientSwagger/onlineLibrary.client';
+import { OnlineLibraryService } from 'src/app/components/shared/services/online-library.service';
 
 @Component({
   selector: 'app-book-list',
@@ -9,25 +10,58 @@ import { BookDto } from 'src/app/components/shared/clientSwagger/onlineLibrary.c
 })
 export class BookListComponent implements OnInit {
 
-  @Input() items : BookDto[] = [];
+  constructor(private onlineLibraryService: OnlineLibraryService) {
+
+  }
+  itemBooks : BookDto[] = [];
+  filteredBooks : BookDto[] = [];
   @Input() title : string = '';
   @Input() description : string = '';
   @Input() show : boolean = true;
   bookDto: BookDto = new BookDto();
-
+  _bookFilter = '';
   showFormAdd : boolean = false;
   showDetail : boolean = false;
   showSpinner : boolean = false;
-  pageSlice :  BookDto[] = this.items.slice(0, 5);
+  pageSlice :  BookDto[] = [];
   endIndex: number = 0;
   isAuthorForm: boolean = false;
   isBookForm: boolean = false;
   isBookUploadForm: boolean = false;
 
   ngOnInit(): void {
-    if(this.items.length > 0){
-      this.pageSlice = this.items.slice(0, 5);
-    }
+    this.getBooks();
+    this.bookFilter = ""
+  }
+
+  public async getBooks() {
+    await this.onlineLibraryService.getAllBooks()
+      .then(x => {
+        this.itemBooks = x;
+        this.filteredBooks = this.itemBooks;
+        this.pageSlice = this.itemBooks.slice(0, 5);
+      })
+      .catch(x => console.log(x));
+  }
+
+  public get bookFilter(): string {
+    return this._bookFilter;
+  }
+
+  public set bookFilter(filter: string) {
+    this._bookFilter = filter;
+
+    this.filteredBooks = this.bookFilter ? this.filterBooks(this.bookFilter) : this.itemBooks;
+  }
+
+  private filterBooks(criteria: string): BookDto[] {
+    criteria = criteria.toLocaleLowerCase();
+
+    const response = this.itemBooks.filter(x =>
+      x?.title.toLocaleLowerCase().indexOf(criteria) != -1 ||
+      x?.author?.lastName.toLocaleLowerCase().indexOf(criteria) != -1
+      );
+    return response;
   }
 
   showFormModal(isAuthorForm: boolean){
@@ -79,11 +113,12 @@ export class BookListComponent implements OnInit {
   onPageChange(event: PageEvent) {
     const startIndex = event.pageIndex * event.pageSize;
     this.endIndex = startIndex + event.pageSize;
-    if(this.endIndex > this.items.length){
-      this.endIndex = this.items.length;
+
+    if(this.endIndex > this.filteredBooks.length){
+      this.endIndex = this.filteredBooks.length;
     }
 
-    this.pageSlice = this.items.slice(startIndex, this.endIndex);
+    this.pageSlice = this.filteredBooks.slice(startIndex, this.endIndex);
   }
 
 }

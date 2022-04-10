@@ -1,5 +1,5 @@
 <div class="pt-2 mt-4">
-  <h3 class="text-lg leading-6 font-medium text-gray-900">{{type}} Stats</h3>
+  <h3 class="text-lg leading-6 font-medium text-gray-900">Statistique des {{type}} </h3>
 
   <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
     <div *ngFor="let item of items" class="relative bg-white pt-5 px-4 pb-12 sm:pt-6 sm:px-6 shadow rounded-lg overflow-hidden">
@@ -18,7 +18,7 @@
         </p>
         <div class="absolute bottom-0 inset-x-0 bg-gray-50 px-4 py-4 sm:px-6">
           <div class="text-sm">
-            <a routerLink="/dashboard" class="font-medium text-indigo-600 hover:text-indigo-500"> Voir tout<span class="sr-only"> Total Subscribers stats</span></a>
+            <a [routerLink]="link" class="font-medium text-indigo-600 hover:text-indigo-500"> Voir tout<span class="sr-only"> Total Subscribers stats</span></a>
           </div>
         </div>
       </dd>

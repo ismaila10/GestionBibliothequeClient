@@ -1,12 +1,12 @@
 <div>
   <div>
-    <app-dashboard-card [items]="bookStats" type="Livres"></app-dashboard-card>
+    <app-dashboard-card [items]="bookStats" type="Livres" link="/dashboard/book" ></app-dashboard-card>
   </div>
   <div>
-    <app-dashboard-card [items]="loanStats" type="Pret"></app-dashboard-card>
+    <app-dashboard-card [items]="loanStats" type="Pret" link="/dashboard/loan"></app-dashboard-card>
   </div>
   <div>
-    <app-dashboard-card [items]="userStats" type="Utilisateur"></app-dashboard-card>
+    <app-dashboard-card [items]="userStats" type="Utilisateur" link="/dashboard/user"></app-dashboard-card>
   </div>
 </div>
 

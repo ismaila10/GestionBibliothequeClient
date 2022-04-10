@@ -18,7 +18,7 @@ export class BookComponent implements OnInit {
   bookList : BookDto[] = [];
 
   public async getBooks() {
-    this.onlineLibraryService.getAllBooks()
+    await this.onlineLibraryService.getAllBooks()
       .then(x => {
         this.bookList = x;
         console.log(this.bookList)

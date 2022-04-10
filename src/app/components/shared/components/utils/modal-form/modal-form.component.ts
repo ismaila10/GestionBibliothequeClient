@@ -29,9 +29,6 @@ export class ModalFormComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     this.getAuthors();
     this.getCategories();
-    /*console.log("bookform => "+ this.isBookForm)
-    console.log("authorform => "+ this.isAuthorForm)
-    console.log("uploadform => "+ this.isUploadForm)*/
     console.log(this.item);
     if(this.item?.id){
       this.bookForm = this.formPatchValue()
@@ -55,6 +52,8 @@ export class ModalFormComponent implements OnInit, OnChanges {
   @Output() isValidateModal : EventEmitter<boolean> = new EventEmitter();
 
   classTaille : string = '';
+  message : string = '';
+  isNotif: boolean = false;
   showSpinner : boolean = false;
   isSubmit: boolean = false;
   categories : Category[] = [];
@@ -70,10 +69,11 @@ export class ModalFormComponent implements OnInit, OnChanges {
   isFileUploaded: boolean = false;
   isReadyToRunProcess: boolean = false;
   isFileHeaderCorrect: boolean = false;
-  isFileError: boolean = false;
+  isFileSuccess: boolean = true;
   fileValidHeader : Array<string> = [];
   errorMessage: string = '';
   isProcessSuccessed: boolean = true;
+  isValidInput = true;
 
   ngOnInit(): void {
 
@@ -92,7 +92,7 @@ export class ModalFormComponent implements OnInit, OnChanges {
     this.isFormatHasError = false;
     this.isReadyToRunProcess = false;
     this.isFileHeaderCorrect = true;
-    this.isFileError = false;
+    this.isFileSuccess = true;
   }
 
   formPatchValue(): FormGroup {
@@ -124,13 +124,6 @@ export class ModalFormComponent implements OnInit, OnChanges {
       this.fileInputVariable.nativeElement.value = "";
       return;
     }
-    /*if (this.file.type != 'application/vnd.ms-excel') {
-			this.isFormatHasError = true;
-		}else {
-      this.isReadyToRunProcess = true;
-      this.fileValidHeader = ["titre", "maison_de_publication", "quantite", "statut", "description", "image", "date_de_publication", "prenom_auteur", "nom_auteur", "nationalite_auteur", "categorie"];
-      this.checkHeaderFile(this.file, this.fileValidHeader);
-    }*/
     this.isReadyToRunProcess = true;
     this.fileValidHeader = ["titre", "maison_de_publication", "quantite", "statut", "description", "image", "date_de_publication", "prenom_auteur", "nom_auteur", "nationalite_auteur", "categorie"];
     this.checkHeaderFile(this.file, this.fileValidHeader);
@@ -146,9 +139,13 @@ export class ModalFormComponent implements OnInit, OnChanges {
 
 			const equals = (a : any, b : any) : boolean => JSON.stringify(a) === JSON.stringify(b);
       const b = equals(headersRow, validHeader);
-      console.log("b => "+b);
 			if (!equals(headersRow, validHeader)) {
-				this.isFileHeaderCorrect = false;
+        this.errorMessage = "Les en-têtes du fichier chargé ne sont pas conformes";
+        this.isFileHeaderCorrect = false;
+        setTimeout(() => {
+          this.isFileHeaderCorrect = true;
+          this.errorMessage = '';
+        }, 5000);
 				this.isReadyToRunProcess = false;
 			}
 		};
@@ -168,7 +165,7 @@ export class ModalFormComponent implements OnInit, OnChanges {
     this.authorForm.reset();
     this.isFileUploaded = false;
     this.isFormatHasError = false;
-    this.isFileError = false;
+    this.isFileSuccess = true;
     this.isReadyToRunProcess = false;
     this.showSpinner = false;
     this.isFileHeaderCorrect = true;
@@ -204,42 +201,69 @@ export class ModalFormComponent implements OnInit, OnChanges {
 
   async validateForm() {
     if (this.bookForm.invalid) {
-			alert("Form book invalid ");
-      this.bookForm.reset();
-      this.isValidForm = false;
+      this.errorMessage = "Veuillez remplir tous les champs obligatoires";
       if(this.authorForm.invalid){
-        alert("Form author invalid"+ this.authorForm.value);
-        this.authorForm.reset();
+        this.errorMessage = "Veuillez remplir tous les champs obligatoires";
       }else {
         this.showSpinner = true;
-        alert(this.authorForm.value)
         this.authorInfos.firstName = this.authorForm.get('firstName')?.value;
         this.authorInfos.lastName = this.authorForm.get('lastName')?.value;
         this.authorInfos.country = this.authorForm.get('country')?.value;
         this.authorInfos.birthDay = new Date(this.authorForm.get('birthDay')?.value);
-        this.onlineLibraryService.upsertAuthor(this.authorInfos)
+        await this.onlineLibraryService.upsertAuthor(this.authorInfos)
         .then(x => {
-          console.log(x + " ok insert");
+          this.message = "Auteur ajouté avec succes";
+            this.isValidForm = true;
+            this.isNotif = true;
+            setTimeout(() => {
+              this.isNotif = false;
+            }, 9000);
+            this.authorForm.reset();
           this.showSpinner = false;
         })
         .catch(x => {
-          console.log(x + " Not ok insert");
+          this.message = "Erreur lors de l'ajout";
+            this.isValidForm = false;
+            this.isNotif = true;
+            setTimeout(() => {
+              this.isNotif = false;
+              this.isValidForm = true;
+            }, 9000);
           this.showSpinner = false;
         })
-        this.authorForm.reset();
+        return;
       }
+      this.isValidInput = false;
+      setTimeout(() => {
+        this.isValidInput = true;
+        this.errorMessage = ''
+      }, 5000);
 		}else {
       this.showSpinner = true;
       await this.onlineLibraryService.getAuthorById(this.bookForm?.value?.author)
         .then(x => {
           this.bookInfos.author = x;
         })
-        .catch(x => console.log(x));
+        .catch(x => {
+          this.errorMessage = "Erreur lors de la récupèration des informations de l'auteur";
+          this.isValidInput = false;
+          setTimeout(() => {
+            this.isValidInput = true;
+            this.errorMessage = ''
+          }, 5000);
+        });
       await this.onlineLibraryService.getCategoryById(this.bookForm?.value?.category)
         .then(x => {
           this.bookInfos.category = x;
         })
-        .catch(x => console.log(x));
+        .catch(x => {
+          this.errorMessage = "Erreur lors de la récupèration des informations de la catégorie";
+          this.isValidInput = false;
+          setTimeout(() => {
+            this.isValidInput = true;
+            this.errorMessage = ''
+          }, 5000);
+        });
 
       this.bookInfos.title = this.bookForm.value?.title;
       this.bookInfos.description = this.bookForm.value?.description;
@@ -248,17 +272,28 @@ export class ModalFormComponent implements OnInit, OnChanges {
       this.bookInfos.publishingHouse = this.bookForm.value?.publishingHouse;
       this.bookInfos.quantity = this.bookForm.value?.quantity;
 
-      this.onlineLibraryService.addBook(this.bookInfos)
+      await this.onlineLibraryService.addBook(this.bookInfos)
         .then(x => {
-          console.log(x + " ok insert");
+          this.message = "Livre ajouté avec succes";
+            this.isValidForm = true;
+            this.isNotif = true;
+            setTimeout(() => {
+              this.isNotif = false;
+            }, 9000);
+            this.bookForm.reset();
           this.showSpinner = false;
+          this.bookForm.reset();
         })
         .catch(x => {
-          console.log(x + " Not ok insert");
+          this.message = "Erreur lors de l'ajout";
+            this.isValidForm = false;
+            this.isNotif = true;
+            setTimeout(() => {
+              this.isNotif = false;
+              this.isValidForm = true;
+            }, 9000);
           this.showSpinner = false;
         })
-
-        this.bookForm.reset();
         this.item = new BookDto();
     }
   }
@@ -280,19 +315,53 @@ export class ModalFormComponent implements OnInit, OnChanges {
         await this.onlineLibraryService.uploadBook(fileParameter)
           .then(x => {
             this.showSpinner = false;
-            console.log("then => "+x)
+            this.message = "Les livres ont été ajoutés avec succes";
+            this.isFileSuccess = true;
+            this.isNotif = true;
+            setTimeout(() => {
+              this.isNotif = false;
+              this.message = '';
+            }, 9000);
+            this.fileInputVariable.nativeElement.value = "";
           }).catch(err => {
-            console.log("catch err then => "+err.ErrorMessage)
-            this.showSpinner = false;
+            if(err.ErrorMessage || err.ErrorMessage == ''){
+              this.showSpinner = false;
+              this.message = "Erreur lors de l'ajout, le fichier contient un champ vide";
+              this.isFileSuccess = false;
+              this.isNotif = true;
+              setTimeout(() => {
+                this.isNotif = false;
+                this.message = '';
+                this.isFileSuccess = true;
+              }, 9000);
+            }else {
+              this.showSpinner = false;
+              this.message = "Les livres ont été ajoutés avec succes";
+              this.isFileSuccess = true;
+              this.isNotif = true;
+              setTimeout(() => {
+                this.isNotif = false;
+                this.message = '';
+              }, 9000);
+              this.fileInputVariable.nativeElement.value = "";
+            }
+
           })
       }
       catch (err : any) {
-        console.log("catch err try => "+ err.toString())
 				this.showSpinner = false;
-				this.isFileError = true;
+        this.showSpinner = false;
+        this.message = "Erreur lors de l'ajout, le fichier contient un champ vide";
+        this.isFileSuccess = false;
+        this.isNotif = true;
+        setTimeout(() => {
+          this.isNotif = false;
+          this.message = '';
+          this.isFileSuccess = true;
+        }, 9000);
+
 			}
     }
-    this.fileInputVariable.nativeElement.value = "";
   }
 
   validateModal() {
